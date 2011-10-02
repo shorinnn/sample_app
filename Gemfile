@@ -6,7 +6,7 @@ gem 'gravatar_image_tag', '1.0.0.pre2'
 
 group :development do
   gem 'rspec-rails', '2.6.1'
-  gem 'annotate',
+  gem 'annotate', 
 :git => 'git://github.com/jeremyolliver/annotate_models.git', :branch => 'rake_compatibility'
 end
 
