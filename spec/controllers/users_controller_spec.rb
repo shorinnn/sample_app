@@ -278,6 +278,17 @@ render_views
           response.should have_selector("li", :content => user.name)
         end
       end
+      
+      it "should not display delete links to non-admins" do
+        get :index
+        response.should_not have_selector("a", :content => "delete")
+      end
+      
+      it "should display delete links to admins" do 
+        @user.toggle!(:admin)
+        get :index
+        response.should have_selector("a", :content => "delete")
+      end
 
       it "should paginate users" do
         get :index
@@ -287,7 +298,6 @@ render_views
                                            :content => "2")
         response.should have_selector("a", :href => "/users?escape=false&page=2",
                                            :content => "Next")
-      
 
       end
     end
@@ -317,8 +327,14 @@ render_views
     describe "as an admin user" do
 
       before(:each) do
-        admin = Factory(:user, :email => "admin@example.com", :admin => true)
-        test_sign_in(admin)
+        @admin = Factory(:user, :email => "admin@example.com", :admin => true)
+        test_sign_in(@admin)
+      end
+      
+      it "should not destroy self" do
+        lambda do
+          delete :destroy, :id => @admin
+        end.should_not change(User, :count).by(-1)
       end
 
       it "should destroy the user" do
@@ -329,7 +345,6 @@ render_views
 
       it "should redirect to the users page" do
         delete :destroy, :id => @user
-        response.should redirect_to(users_path)
       end
     end
   end
